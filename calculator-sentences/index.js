@@ -21,10 +21,10 @@ const dictionary = [
     //calculator constants
     {key: "mp", value: ["ADVa1rWo", "AAHox9CA"]}, {key: "mn", value: ["ADVa1rWo", "AAFsxjGI"]},
     {key: "me", value: ["ADVa1rWo", "AB0Y/hFw"]}, {key: "ao", value: ["AB0TpjNo", "AADoxjFw"]},
-    {key: "re", value: ["AC2YQhCA", "AB0Y/hFw"]}, {key: "NA", value: ["jnNaznGI", "AADox/GI"]},
-    {key: "Vm", value: ["jGMVKUQg", "ADVa1rWo"]}, {key: "co", value: ["AB0YQhFw", "AADoxjFw"]},
-    {key: "Go", value: ["dGELxjNo", "AADoxjFw"]}, {key: "Zo", value: ["+EQiIRD4", "AADoxjFw"]},
-    {key: "atm", value: ["AB0TpjNo", "QjyEIQkw", "ADVa1rWo"]},
+    {key: "re", value: ["AC2YQhCA", "AB0Y/hFw"]}, {key: "na", value: ["jnNaznGI", "AADox/GI"]},
+    {key: "vm", value: ["jGMVKUQg", "ADVa1rWo"]}, {key: "co", value: ["AB0YQhFw", "AADoxjFw"]},
+    {key: "go", value: ["dGELxjNo", "AADoxjFw"]}, {key: "zo", value: ["+EQiIRD4", "AADoxjFw"]},
+    {key: "atm", value: ["AB0TpjNo", "QjyEIQkw", "ADVa1rWo"]}, {key: "ans", value: ["IpUY/jGI", "AC2YxjGI", "AB0YODFw"]},
     //numbers
     {key: "0", value: "dGMYxjFw"}, {key: "1", value: "IwhCEIRw", alias: "l"},
     {key: "2", value: "dGIRERD4", alias: "Z"}, {key: "3", value: "dGITBjFw"},
@@ -32,7 +32,7 @@ const dictionary = [
     {key: "6", value: "MiEPRjFw"}, {key: "7", value: "/EIhCIQg"},
     {key: "8", value: "dGMXRjFw"}, {key: "9", value: "dGMXhCJg"},
     //special characters
-    {key: "-", value: "AAAPgAAA", alias: " "}, {key: ":", value: "AxgAMYAA"}
+    {key: "-", value: "AAAPgAAA", alias: " "}, {key: ":", value: "AxgAMYAA"}, {key: ".", value: "AAAAAAxg"}
 ];
 
 button.addEventListener("click", () => {generate(input.value.trim())});
@@ -42,10 +42,18 @@ function generate(input) {
     ctx.clearRect(0, 0, canvas.clientWidth, canvas.clientHeight);
     cursor = tileSize;
 
+    //logic for printing words
     for (let i = 0; i < input.length; i++) {
         if (dictionary.find(word => {return word.key == input[i] + input[i+1] + input[i+2]}) !== undefined) {
-            //checks for constant "atm"
+            //checks for all calculator constants with 3 letters
             let word = dictionary.find(word => {return word.key == input[i] + input[i+1] + input[i+2]});
+            drawCharacter(base64tobin(word.value[0]));
+            drawCharacter(base64tobin(word.value[1]));
+            drawCharacter(base64tobin(word.value[2]));
+            i += 2;
+        } else if (i+2 < input.length && dictionary.find(word => {return word.key == input[i].toLowerCase() + input[i+1].toLowerCase() + input[i+2].toLowerCase()}) !== undefined) {
+            //lowercase
+            let word = dictionary.find(word => {return word.key == input[i].toLowerCase() + input[i+1].toLowerCase() + input[i+2].toLowerCase()});
             drawCharacter(base64tobin(word.value[0]));
             drawCharacter(base64tobin(word.value[1]));
             drawCharacter(base64tobin(word.value[2]));
@@ -56,21 +64,24 @@ function generate(input) {
             drawCharacter(base64tobin(word.value[0]));
             drawCharacter(base64tobin(word.value[1]));
             i++;
-        } else {
-            //TODO: check for every possible combination (i.e: Mn should print mn and not M)
-            if (dictionary.find(word => {return word.key == input[i] || word.alias == input[i]}) !== undefined) {
-                //checks for all normal cases and numbers
-                let word = dictionary.find(word => {return word.key == input[i] || word.alias == input[i]});
-                drawCharacter(base64tobin(word.value));
-            } else if (dictionary.find(word => {return word.key == input[i].toLowerCase() || word.alias == input[i].toLowerCase()}) !== undefined) {
-                //checks for lowercase key
-                let word = dictionary.find(word => {return word.key == input[i].toLowerCase() || word.alias == input[i].toLowerCase()});
-                drawCharacter(base64tobin(word.value));
-            } else if (dictionary.find(word => {return word.key == input[i].toUpperCase() || word.alias == input[i].toUpperCase()}) !== undefined) {
-                //checks for uppercase key
-                let word = dictionary.find(word => {return word.key == input[i].toUpperCase() || word.alias == input[i].toUpperCase()});
-                drawCharacter(base64tobin(word.value));
-            }
+        } else if (i+1 < input.length && dictionary.find(word => {return word.key == input[i].toLowerCase() + input[i+1].toLowerCase()}) !== undefined) {
+            //lowercase
+            let word = dictionary.find(word => {return word.key == input[i].toLowerCase() + input[i+1].toLowerCase()});
+            drawCharacter(base64tobin(word.value[0]));
+            drawCharacter(base64tobin(word.value[1]));
+            i++;
+        } else if (dictionary.find(word => {return word.key == input[i] || word.alias == input[i]}) !== undefined) {
+            //checks for all normal cases and numbers
+            let word = dictionary.find(word => {return word.key == input[i] || word.alias == input[i]});
+            drawCharacter(base64tobin(word.value));
+        } else if (dictionary.find(word => {return word.key == input[i].toLowerCase() || word.alias == input[i].toLowerCase()}) !== undefined) {
+            //checks for lowercase key
+            let word = dictionary.find(word => {return word.key == input[i].toLowerCase() || word.alias == input[i].toLowerCase()});
+            drawCharacter(base64tobin(word.value));
+        } else if (dictionary.find(word => {return word.key == input[i].toUpperCase() || word.alias == input[i].toUpperCase()}) !== undefined) {
+            //checks for uppercase key
+            let word = dictionary.find(word => {return word.key == input[i].toUpperCase() || word.alias == input[i].toUpperCase()});
+            drawCharacter(base64tobin(word.value));
         }
     }
 }
@@ -98,7 +109,7 @@ function base64tobin(input) {
     for (let l of arr) {
         if (l.match(/[A-Z]/)) output += (l.charCodeAt()-65).toString(2).padStart(6, "0");
         if (l.match(/[a-z]/)) output += (l.charCodeAt()-71).toString(2).padStart(6, "0");
-        if (l.match(/[0-9]/)) output += (l.charCodeAt()+4).toString(2).padStart(6, "0");
+        if (l.match(/[0-9]/)) output += (l.charCodeAt()+04).toString(2).padStart(6, "0");
         if (l == "+") output += "111110";
         if (l == "/") output += "111111";
     }
