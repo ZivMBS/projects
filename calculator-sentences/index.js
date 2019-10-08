@@ -149,11 +149,3 @@ function base64tobin(input) {
 
     return output;
 }
-
-function flipLetterCase(letter) {
-    return letter.toString().split("").map(function(c) {
-        return c === c.toUpperCase()
-        ? c.toLowerCase()
-        : c.toUpperCase()
-    }).join("");
-}
