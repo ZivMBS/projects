@@ -154,7 +154,7 @@ function generateLetters() {
         cursor[0] = tileSize;
 
         for (let l = 0; l < dictionary[i].v.length; l++) {
-            let character = base64tobin([dictionary[i].value[l]]);
+            let character = base64tobin([dictionary[i].v[l]]);
             drawCharacter(character, con);
         }
 
